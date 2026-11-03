@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="fi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="app-token" content="__APP_TOKEN__" />
+  <title>OpenTech2 Bridge</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="logo"><div class="logo-mark">T<span>2</span></div><div><strong>OpenTech2</strong><small>COMMUNITY BRIDGE • v0.1</small></div></div>
+      <div class="sidebar-label">DIAGNOSTIIKKA</div>
+      <nav><button class="nav active" data-panel="overview">◉ &nbsp; Yleiskuva</button><button class="nav" data-panel="live">▤ &nbsp; Mittausarvot</button><button class="nav" data-panel="faults">⚠ &nbsp; Vikakoodit</button><button class="nav" data-panel="cards">▣ &nbsp; Ohjelmistokortit</button><button class="nav" data-panel="security">◇ &nbsp; Turvapääsy</button></nav>
+      <div class="sidebar-info"><div class="led"></div><span>LOKAALI TYÖASEMA</span></div>
+      <p class="sidebar-footer">Itsenäinen avoin projekti. Ei GM:n, Saabin tai Boschin virallinen ohjelmisto.</p>
+    </aside>
+    <main class="main">
+      <header class="top"><div><div class="overline">AJONEUVODIAGNOSTIIKKA / OHJAUSPANEELI</div><h1 id="page-title">Ajoneuvon yleiskuva</h1></div><div class="top-status"><span id="connection-badge" class="chip">Ei yhteyttä</span><span class="readonly">● VAIN LUKU</span></div></header>
+      <div id="error-banner" class="banner error hidden" role="alert"></div>
+      <div id="demo-banner" class="banner demo hidden">DEMO-TILA — Näytettävät arvot ovat esimerkkejä, eivät autosta mitattuja.</div>
+      <section id="overview" class="panel active">
+        <div class="column-grid">
+          <article class="card"><div class="card-title">1 / Ajoneuvon valinta</div><label for="brand">Automerkki</label><select id="brand"></select><label for="model">Malli / vuosimalli (valinnainen)</label><input id="model" placeholder="esim. 9-3 2004" maxlength="120" /><button class="button primary" id="save-vehicle">Valitse ajoneuvo</button><div class="hint">Merkkiluettelo ei tarkoita, että kaikki tehdastoiminnot olisi toteutettu. Geneerinen OBD-II kattaa vain auton tukemat tiedot.</div></article>
+          <article class="card"><div class="card-title">2 / Ajoneuvoyhteys</div><div class="data-pair"><span>Yhteystila</span><strong id="status-adapter">Ei yhteyttä</strong></div><div class="data-pair"><span>Ajoneuvo</span><strong id="status-vehicle">—</strong></div><label for="port">ELM327 USB-sarjaportti</label><input id="port" placeholder="/dev/cu.usbserial-0001" value="" /><label for="baud">Nopeus (baud)</label><select id="baud"><option>38400</option><option>115200</option><option>9600</option><option>57600</option></select><div class="buttonrow"><button class="button primary" id="connect">Yhdistä</button><button class="button ghost" id="disconnect">Katkaise</button></div><div class="hint">Mac: /dev/cu.usbserial-... • Linux: /dev/ttyUSB0 • Windows: COM3</div></article>
+        </div>
+        <article class="card feature-card"><div><div class="card-title">Kolmen kerroksen ratkaisu</div><h2>Yksi käyttöliittymä. Laajennettavat automerkit.</h2><p>Geneerinen OBD-II on käytössä ELM327-yhteyden kautta. Tech 2 -kortit näkyvät metatietokatalogina. Valmistajakohtainen diagnostiikka ja virallinen turvapääsy ovat jatkokehityksen moduuleja.</p></div><div class="feature-rows"><div><strong>01</strong> OBD-II → live & vikakoodit <span class="mini ready">TOTEUTETTU</span></div><div><strong>02</strong> OEM-profiilit / kortit <span class="mini">KATALOGI</span></div><div><strong>03</strong> Ohjainlaitteet / turvapääsy <span class="mini lock">EI TOTEUTETTU</span></div></div></article>
+      </section>
+      <section id="live" class="panel"><div class="section-bar"><p>Mode 01 -päästöjärjestelmien perustiedot. Kaikki anturit eivät ole kaikissa autoissa käytössä.</p><button class="button secondary" id="refresh-live">Päivitä arvot</button></div><div id="sensor-grid" class="metrics"><div class="empty">Yhdistä adapteri tai käynnistä --demo.</div></div></section>
+      <section id="faults" class="panel"><div class="section-bar"><p>Geneeriset OBD-II Mode 03 -vikakoodit. ABS-, airbag- ja korimoduulit vaativat OEM-liitännän.</p><button class="button secondary" id="refresh-dtcs">Lue vikakoodit</button></div><div class="card"><div class="card-title">Vikakoodit</div><div id="dtc-list" class="dtcs empty">Vikakoodeja ei ole vielä luettu.</div><div class="hint">Vikakoodien poisto on tarkoituksella pois käytöstä.</div></div></section>
+      <section id="cards" class="panel"><div class="section-bar"><p>Tech 2:n alkuperäiset PCMCIA-korttiohjelmistot eivät sisälly tähän projektiin. Korttien nimet ovat vain tunnisteita.</p></div><div id="card-grid" class="cards"></div><article class="card"><div class="card-title">Oman laillisesti hankitun korttitiedoston tunnistus</div><p>Ohjelma voi tallentaa paikallisen .bin-tiedoston koon ja SHA-256-tiivisteen. Se ei käytä, pura, emuloi eikä kopioi ohjelmistokortin sisältöä.</p><pre>opentech2 cards add /polku/oma-kortti.bin --family saab --label "Oma Saab-kortti"</pre><div id="registered-cards" class="hint"></div></article></section>
+      <section id="security" class="panel"><div class="card security-card"><div class="security-symbol">♢</div><div><div class="card-title">TURVATOIMINTOJEN RAJAUS</div><h2>Valmistajan hyväksymä pääsy vaaditaan</h2><p>Ohjelmointi, avaimien opetus, ajonestotoiminnot ja automallikohtaiset kirjoituskomennot vaativat varmennetun ajoneuvoyhteyden, asianmukaisen käyttöoikeuden sekä erikseen toteutetun OEM-liitännän. Tässä versiossa näitä komentoja ei lähetetä.</p></div></div><div id="protected-actions" class="security-list"></div></section>
+      <footer>OpenTech2 Bridge v0.1.0 · read-only generic OBD-II · 127.0.0.1 only · MIT</footer>
+    </main>
+  </div>
+</body>
+</html>
