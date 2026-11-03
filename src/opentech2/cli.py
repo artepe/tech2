@@ -4,6 +4,7 @@ import json
 from .catalog import CARD_FAMILIES
 from .cards import CardRegistry
 from .inventory import analyze_inventory
+from .uds import SocketCanDidReader, parse_dids, read_demo_identification, UdsError
 from .server import make_server
 
 def main(argv=None):
@@ -21,9 +22,28 @@ def main(argv=None):
     cards_sub.add_parser("list")
     inv=sub.add_parser("inventory",help="Tutki moduuli-/avainmetatietoja OFFLINE, ei ajoneuvokomentoja")
     inv.add_argument("file")
+    uds=sub.add_parser("ecu-read",help="UDS 0x22 ECU-tunnisteiden vain-luku (SocketCAN Linux / demo)")
+    uds.add_argument("--demo",action="store_true")
+    uds.add_argument("--interface",help="Esim. can0 / vcan0 (Linux)")
+    uds.add_argument("--tx-id",help="ECU:n fyysinen pyyntö-ID, esim. 0x7E0")
+    uds.add_argument("--rx-id",help="ECU:n vastaus-ID, esim. 0x7E8")
+    uds.add_argument("--dids",default="F190,F187,F188",help="Sallitut DID:t pilkuilla: F190,F187,F188")
     sub.add_parser("doctor",help="Tarkista ohjelmiston perustiedot")
     args=parser.parse_args(argv)
-    if args.command=="inventory":
+    if args.command=="ecu-read":
+        try:
+            dids=parse_dids(args.dids.split(","))
+            if args.demo:
+                result=read_demo_identification(dids)
+            else:
+                if not all((args.interface,args.tx_id,args.rx_id)):
+                    parser.error("Oikea CAN-luku vaatii --interface, --tx-id ja --rx-id; testaa ensin --demo")
+                with SocketCanDidReader(args.interface,args.tx_id,args.rx_id) as reader:
+                    result=reader.read_many(dids)
+            print(json.dumps({"demo":args.demo,"service":"UDS 0x22 read-only","data":result},ensure_ascii=False,indent=2))
+        except (ValueError,UdsError) as exc:
+            parser.error(str(exc))
+    elif args.command=="inventory":
         print(json.dumps(analyze_inventory(args.file),ensure_ascii=False,indent=2))
     elif args.command=="doctor":
         try: import serial; ser="asennettu"

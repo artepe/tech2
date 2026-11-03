@@ -11,6 +11,7 @@ from .adapters import DemoAdapter, ELM327Adapter, AdapterError
 from .catalog import as_json, MAKES
 from .cards import CardRegistry
 from .security import PROTECTED_ACTIONS
+from .uds import SocketCanDidReader, UdsError, parse_dids, read_demo_identification
 
 STATIC_DIR = Path(__file__).parent / "static"
 PORT_PATTERN = re.compile(r"(?:COM[0-9]{1,3}|/dev/(?:tty[A-Za-z0-9._-]+|cu\.[A-Za-z0-9._-]+|serial/by-id/[A-Za-z0-9._-]+))$", re.I)
@@ -97,12 +98,13 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/status": return self._send(200, self.server.state.status())
         if path == "/api/cards": return self._send(200, self.server.state.card_registry.list())
         if path == "/api/security": return self._send(200, [vars(c) for c in PROTECTED_ACTIONS])
-        if path in ("/api/live", "/api/dtcs"):
+        if path in ("/api/live", "/api/dtcs", "/api/vehicle-identification"):
             with self.server.state.lock:
                 adapter = self.server.state.adapter
                 if not adapter: return self._send(409, {"error":"Ei yhteyttä"})
                 try:
-                    result = adapter.readings() if path == "/api/live" else adapter.dtcs()
+                    result = (adapter.readings() if path == "/api/live" else
+                              adapter.dtcs() if path == "/api/dtcs" else adapter.vehicle_info())
                 except (AdapterError, ValueError, OSError) as exc:
                     return self._send(502, {"error":str(exc)})
             return self._send(200, {"demo": isinstance(adapter, DemoAdapter), "data": result})
@@ -113,7 +115,7 @@ class Handler(BaseHTTPRequestHandler):
         if self.headers.get("X-Tech2-Token", "") != self.server.state.token:
             return self._send(403, {"error":"Virheellinen istunto"})
         path = urlsplit(self.path).path
-        if path not in ("/api/select", "/api/connect", "/api/disconnect"):
+        if path not in ("/api/select", "/api/connect", "/api/disconnect", "/api/ecu/uds"):
             return self._send(404, {"error":"Toimintoa ei ole"})
         if self.headers.get("Content-Type", "").split(";")[0].strip() != "application/json":
             return self._send(415, {"error":"JSON vaaditaan"})
@@ -122,6 +124,17 @@ class Handler(BaseHTTPRequestHandler):
             if size < 0 or size > 4096: return self._send(413, {"error":"Liian suuri pyyntö"})
             body = json.loads(self.rfile.read(size))
             if not isinstance(body,dict): raise ValueError("JSON-objekti vaaditaan")
+            if path == "/api/ecu/uds":
+                dids = parse_dids(body.get("dids", ["F190", "F187", "F188"]))
+                if body.get("demo") is True:
+                    data = read_demo_identification(dids)
+                    is_demo = True
+                else:
+                    with SocketCanDidReader(body.get("interface", ""), body.get("txid"), body.get("rxid")) as reader:
+                        data = reader.read_many(dids)
+                    is_demo = False
+                return self._send(200, {"demo": is_demo, "transport": "Linux SocketCAN ISO-TP / UDS 0x22",
+                                         "data": data, "warning": "Explicit ECU identity read only; no Saab compatibility guaranteed"})
             if path == "/api/disconnect":
                 self.server.state.disconnect()
             elif path == "/api/select":
@@ -129,7 +142,7 @@ class Handler(BaseHTTPRequestHandler):
             else:
                 self.server.state.connect(body.get("port"),body.get("baud",38400),body.get("brand"),body.get("model", ""))
             return self._send(200, self.server.state.status())
-        except (ValueError, AdapterError, OSError) as exc:
+        except (ValueError, AdapterError, UdsError, OSError) as exc:
             return self._send(400, {"error": str(exc)})
 
     def log_message(self, fmt, *args):

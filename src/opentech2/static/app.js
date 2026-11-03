@@ -2,7 +2,7 @@
   'use strict';
   const token = document.querySelector('meta[name="app-token"]').content;
   const $ = id => document.getElementById(id);
-  const names = {overview:'Ajoneuvon yleiskuva',live:'Mittausarvot',faults:'Vikakoodit',cards:'Ohjelmistokortit',security:'Turvapääsy'};
+  const names = {overview:'Ajoneuvon yleiskuva',live:'Mittausarvot',faults:'Vikakoodit',ecu:'ECU-tunnisteet',cards:'Ohjelmistokortit',security:'Turvapääsy'};
   let catalog;
   const asText = (el, text) => { el.textContent = text; };
   const make = (tag, cls, text) => { const el=document.createElement(tag); if(cls)el.className=cls;if(text!==undefined)el.textContent=text;return el; };
@@ -52,6 +52,41 @@
       result.data.forEach(code=>list.append(make('span','dtc',code)));
     }catch(e){list.replaceChildren(make('span','empty','Vikakoodeja ei voitu lukea.'));report(e);}
   }
+  function showIdResults(container, items){
+    container.replaceChildren();
+    items.forEach(item=>{
+      const el=make('div','identity-row');
+      el.append(make('span','identity-label',item.name||item.did));
+      el.append(make('strong','identity-value',item.status==='ok'?item.value:(item.error||'Ei saatavilla')));
+      el.append(make('small','identity-kind',item.did||''));
+      container.append(el);
+    });
+  }
+  async function fetchObdVin(){
+    resetError();
+    $('obd-vin-result').replaceChildren(make('div','hint','Luetaan...'));
+    try{
+      const result=await api('/api/vehicle-identification');
+      const d=result.data;
+      showIdResults($('obd-vin-result'),[{name:'Ajoneuvon VIN',value:d.vin,did:d.source,status:'ok'}]);
+      if(result.demo)$('obd-vin-result').prepend(make('div','demo-marker','DEMO — EI OIKEA VIN'));
+    }catch(e){$('obd-vin-result').replaceChildren();report(e);}
+  }
+  async function fetchUds(isDemo){
+    resetError();
+    const results=$('uds-list');results.replaceChildren(make('div','hint','Odotetaan ECU-vastausta...'));
+    try{
+      const payload={demo:isDemo,dids:['F190','F187','F188']};
+      if(!isDemo){
+        payload.interface=$('can-interface').value.trim();
+        payload.txid=$('can-txid').value.trim();
+        payload.rxid=$('can-rxid').value.trim();
+      }
+      const reply=await api('/api/ecu/uds',payload);
+      showIdResults(results,reply.data);
+      if(reply.demo)results.prepend(make('div','demo-marker','DEMO — SIMULOIDUT VASTAUKSET'));
+    }catch(e){results.replaceChildren();report(e);}
+  }
   async function fetchCards(){
     const grid=$('card-grid');grid.replaceChildren();
     catalog.card_families.forEach(c=>{
@@ -77,6 +112,9 @@
     $('disconnect').addEventListener('click',disconnect);
     $('refresh-live').addEventListener('click',fetchLive);
     $('refresh-dtcs').addEventListener('click',fetchDtcs);
+    $('read-obd-vin').addEventListener('click',fetchObdVin);
+    $('demo-uds').addEventListener('click',()=>fetchUds(true));
+    $('read-uds').addEventListener('click',()=>fetchUds(false));
   }catch(e){report(e);}}
   init();
 })();

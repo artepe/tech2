@@ -3,6 +3,7 @@ from __future__ import annotations
 import threading
 import time
 from .diagnostics import SENSORS, decode_sensor, parse_dtcs
+from .vehicle_info import decode_mode09_vin
 
 class AdapterError(Exception):
     pass
@@ -14,6 +15,8 @@ class DemoAdapter:
         return {key: {"label": val[1], "value": self.values[key], "unit": val[2]} for key,val in SENSORS.items()}
     def dtcs(self):
         return ["P0420", "P0130"]  # deliberately fictitious demonstration data
+    def vehicle_info(self):
+        return {"vin": "TESTVIN1234567890", "source": "DEMO ONLY - fictitious VIN"}
     def close(self):
         return None
 
@@ -66,6 +69,10 @@ class ELM327Adapter:
 
     def dtcs(self):
         return parse_dtcs(self._query("03", max_seconds=7))
+
+    def vehicle_info(self):
+        """Request only generic SAE J1979 Mode 09 PID 02 VIN; no ECU programming."""
+        return {"vin": decode_mode09_vin(self._query("0902", max_seconds=7)), "source": "OBD-II Mode 09 PID 02"}
 
     def close(self):
         if getattr(self, "_serial", None):

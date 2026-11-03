@@ -35,6 +35,20 @@ Open **http://127.0.0.1:8765**. Remove `--demo` for a compatible USB ELM327 adap
 
 Windows (PowerShell): `py -m venv .venv`, `.venv\Scripts\Activate.ps1`, `py -m pip install -e ".[serial]"`, `opentech2 serve --demo`.
 
+## Uutta: ECU-identiteetin luku / UDS (v0.2)
+
+**Oikea, rajattu CAN/ISO-TP-lukuyhteys Linuxissa** sekä simuloitu testi Macilla:
+
+```bash
+opentech2 ecu-read --demo
+# Vain omistamasi tai luvallisesti huollettavan laitteen varmennetut ISO-TP-osoitteet:
+# opentech2 ecu-read --interface can0 --tx-id 0x7E0 --rx-id 0x7E8
+```
+
+Jälkimmäinen komento on **vain esimerkki geneerisestä fyysisestä ECU-osoiteparista**, ei väite Saabin CIM:n tai ECM:n oikeasta osoitteesta. Ennen oikeaa autoyhteyttä tarkista valmistajan dokumentoimat CAN-väylä, liitin, nopeus ja ECU-osoitteet. Kernelin CAN_ISOTP vaatii Linux-tuen. Se lähettää vain UDS 0x22 ReadDataByIdentifier -pyyntöjä 1–6 etukäteen määriteltyyn DID-tunnisteeseen. Ei automaattista skannausta, turvapääsyä tai kirjoitustoimintoja. Macin ELM327-yhteydellä voi nyt lukea myös ajoneuvon geneerisen OBD-II VIN-tunnisteen, jos auto tukee Mode 09 PID 02 -kyselyä.
+
+Lisäohje: [CAN/UDS-kehitys ja rajoitukset](docs/04_ECU_LUKUDIAGNOSTIIKKA_FI.md).
+
 ## Ohjeet suomeksi
 
 - [Aloita tästä: MacBook, demo ja OBD-II](docs/00_ALOITA_TASTA_FI.md)

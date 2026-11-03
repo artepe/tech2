@@ -13,7 +13,7 @@
     <aside class="sidebar">
       <div class="logo"><div class="logo-mark">T<span>2</span></div><div><strong>OpenTech2</strong><small>COMMUNITY BRIDGE • v0.1</small></div></div>
       <div class="sidebar-label">DIAGNOSTIIKKA</div>
-      <nav><button class="nav active" data-panel="overview">◉ &nbsp; Yleiskuva</button><button class="nav" data-panel="live">▤ &nbsp; Mittausarvot</button><button class="nav" data-panel="faults">⚠ &nbsp; Vikakoodit</button><button class="nav" data-panel="cards">▣ &nbsp; Ohjelmistokortit</button><button class="nav" data-panel="security">◇ &nbsp; Turvapääsy</button></nav>
+      <nav><button class="nav active" data-panel="overview">◉ &nbsp; Yleiskuva</button><button class="nav" data-panel="live">▤ &nbsp; Mittausarvot</button><button class="nav" data-panel="faults">⚠ &nbsp; Vikakoodit</button><button class="nav" data-panel="ecu">⌕ &nbsp; ECU-tunnisteet</button><button class="nav" data-panel="cards">▣ &nbsp; Ohjelmistokortit</button><button class="nav" data-panel="security">◇ &nbsp; Turvapääsy</button></nav>
       <div class="sidebar-info"><div class="led"></div><span>LOKAALI TYÖASEMA</span></div>
       <p class="sidebar-footer">Itsenäinen avoin projekti. Ei GM:n, Saabin tai Boschin virallinen ohjelmisto.</p>
     </aside>
@@ -30,6 +30,34 @@
       </section>
       <section id="live" class="panel"><div class="section-bar"><p>Mode 01 -päästöjärjestelmien perustiedot. Kaikki anturit eivät ole kaikissa autoissa käytössä.</p><button class="button secondary" id="refresh-live">Päivitä arvot</button></div><div id="sensor-grid" class="metrics"><div class="empty">Yhdistä adapteri tai käynnistä --demo.</div></div></section>
       <section id="faults" class="panel"><div class="section-bar"><p>Geneeriset OBD-II Mode 03 -vikakoodit. ABS-, airbag- ja korimoduulit vaativat OEM-liitännän.</p><button class="button secondary" id="refresh-dtcs">Lue vikakoodit</button></div><div class="card"><div class="card-title">Vikakoodit</div><div id="dtc-list" class="dtcs empty">Vikakoodeja ei ole vielä luettu.</div><div class="hint">Vikakoodien poisto on tarkoituksella pois käytöstä.</div></div></section>
+      <section id="ecu" class="panel">
+        <div class="banner demo">ECU-TUNNISTEET — vain lukupyyntöjä, ei avainten ohjelmointia, turvapääsyä eikä ECU-koodausta.</div>
+        <div class="column-grid">
+          <article class="card">
+            <div class="card-title">Mac / Windows / Linux · Geneerinen OBD-II</div>
+            <h2>Ajoneuvon VIN</h2>
+            <p>Pyydä standardoitu OBD-II Mode 09 PID 02 -VIN. Vaatii olemassa olevan ELM327-yhteyden; demotilassa näyttää testitunnisteen.</p>
+            <button id="read-obd-vin" class="button primary">Lue VIN adapterista</button>
+            <div id="obd-vin-result" class="info-results"><div class="hint">Tunnistetta ei ole vielä pyydetty.</div></div>
+          </article>
+          <article class="card">
+            <div class="card-title">Linux · SocketCAN / ISO-TP</div>
+            <h2>ECU:n identiteetti (UDS 0x22)</h2>
+            <p>Syötä itse varmennetut ECU:n fyysiset CAN-tunnisteet. Ei automaattista skannausta. <strong>Saab CIM -yhteensopivuutta ei ole vahvistettu.</strong></p>
+            <label for="can-interface">CAN-rajapinta</label><input id="can-interface" value="vcan0" placeholder="can0 / vcan0" maxlength="12" />
+            <div class="two-inputs">
+              <div><label for="can-txid">Pyyntö-ID</label><input id="can-txid" placeholder="0x7E0" maxlength="8" /></div>
+              <div><label for="can-rxid">Vastaus-ID</label><input id="can-rxid" placeholder="0x7E8" maxlength="8" /></div>
+            </div>
+            <div class="hint">DID: F190 (VIN), F187 (osanumero), F188 (ohjelmistonumero). Macilla käytä simulaattoria; oikea SocketCAN vaatii Linuxin.</div>
+            <div class="buttonrow"><button id="demo-uds" class="button secondary">Näytä testivastaukset</button><button id="read-uds" class="button ghost">Lue oikea ECU</button></div>
+            <div id="uds-list" class="info-results"><div class="hint">Ei luettuja ECU-tunnisteita.</div></div>
+          </article>
+        </div>
+        <article class="card feature-card">
+          <div><div class="card-title">SAAB 9-3 (9440) · TÄRKEÄ RAJOITUS</div><h2>P-bus ≠ I-bus</h2><p>Saabin P-väylä on 500 kbit/s ja I-väylä 33 kbit/s. CIM yhdistää nämä diagnostiikka-arkkitehtuurit. Standardoitu UDS-kysely ei vielä ole Saab Tech 2 -protokollatuki; käytä sitä oikeassa autossa vasta kun osoitteet ja tuetut palvelut on varmennettu.</p></div>
+        </article>
+      </section>
       <section id="cards" class="panel"><div class="section-bar"><p>Tech 2:n alkuperäiset PCMCIA-korttiohjelmistot eivät sisälly tähän projektiin. Korttien nimet ovat vain tunnisteita.</p></div><div id="card-grid" class="cards"></div><article class="card"><div class="card-title">Oman laillisesti hankitun korttitiedoston tunnistus</div><p>Ohjelma voi tallentaa paikallisen .bin-tiedoston koon ja SHA-256-tiivisteen. Se ei käytä, pura, emuloi eikä kopioi ohjelmistokortin sisältöä.</p><pre>opentech2 cards add /polku/oma-kortti.bin --family saab --label "Oma Saab-kortti"</pre><div id="registered-cards" class="hint"></div></article></section>
       <section id="security" class="panel"><div class="card security-card"><div class="security-symbol">♢</div><div><div class="card-title">TURVATOIMINTOJEN RAJAUS</div><h2>Valmistajan hyväksymä pääsy vaaditaan</h2><p>Ohjelmointi, avaimien opetus, ajonestotoiminnot ja automallikohtaiset kirjoituskomennot vaativat varmennetun ajoneuvoyhteyden, asianmukaisen käyttöoikeuden sekä erikseen toteutetun OEM-liitännän. Tässä versiossa näitä komentoja ei lähetetä.</p></div></div><div id="protected-actions" class="security-list"></div></section>
       <footer>OpenTech2 Bridge v0.1.0 · read-only generic OBD-II · 127.0.0.1 only · MIT</footer>
