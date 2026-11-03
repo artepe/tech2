@@ -35,6 +35,21 @@ Open **http://127.0.0.1:8765**. Remove `--demo` for a compatible USB ELM327 adap
 
 Windows (PowerShell): `py -m venv .venv`, `.venv\Scripts\Activate.ps1`, `py -m pip install -e ".[serial]"`, `opentech2 serve --demo`.
 
+## Ohjeet suomeksi
+
+- [Aloita tästä: MacBook, demo ja OBD-II](docs/00_ALOITA_TASTA_FI.md)
+- [Tech 2 -tutkimus, laitteet, CANdi, kortit ja valikot](docs/01_TECH2_TUTKIMUS_FI.md)
+- [Saab, CIM, TWICE, ECM, avaimet ja osanumerot](docs/02_SAAB_CIM_ECU_FI.md)
+- [Avoimen lähdekoodin kehityssuunnitelma](docs/03_ARKKITEHTUURI_FI.md)
+
+### Offline-osainventaario (ei ohjelmointia)
+
+```bash
+opentech2 inventory examples/bench_modules.json
+```
+
+Tämä voi käsitellä useita avain- ja ohjainlaitemerkintöjä ilman keinotekoista lukumäärärajaa **vain paikallisessa tietotarkastelussa**. Se ei ole avainten koodaus, turvaväylän avaus, EEPROM-muokkaus tai ECU-flashaus. Osanumeroiden yhteensopivuus ilmoitetaan **varmistamattomaksi**, kun hyväksyttyä valmistajalähdettä ei ole.
+
 ## Test
 
 ```bash

@@ -3,6 +3,7 @@ import argparse
 import json
 from .catalog import CARD_FAMILIES
 from .cards import CardRegistry
+from .inventory import analyze_inventory
 from .server import make_server
 
 def main(argv=None):
@@ -18,9 +19,13 @@ def main(argv=None):
     reg.add_argument("--family",required=True,choices=[c.id for c in CARD_FAMILIES])
     reg.add_argument("--label",required=True)
     cards_sub.add_parser("list")
+    inv=sub.add_parser("inventory",help="Tutki moduuli-/avainmetatietoja OFFLINE, ei ajoneuvokomentoja")
+    inv.add_argument("file")
     sub.add_parser("doctor",help="Tarkista ohjelmiston perustiedot")
     args=parser.parse_args(argv)
-    if args.command=="doctor":
+    if args.command=="inventory":
+        print(json.dumps(analyze_inventory(args.file),ensure_ascii=False,indent=2))
+    elif args.command=="doctor":
         try: import serial; ser="asennettu"
         except ImportError: ser="puuttuu: pip install -e '.[serial]'"
         print("OpenTech2 v0.1 | OBD-II: vain luku | OEM / security: ei toteutettu | pyserial:",ser)

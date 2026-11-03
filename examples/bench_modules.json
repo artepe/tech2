@@ -1,0 +1,40 @@
+{
+  "_notice": "FICTIONAL values; not real Saab part numbers. Offline-only inventory.",
+  "vehicle": {
+    "make": "Saab",
+    "model": "9-3",
+    "generation": "9440",
+    "model_year": 2007
+  },
+  "modules": [
+    {
+      "role": "CIM",
+      "part_number": "DEMO-CIM-A",
+      "condition": "original"
+    },
+    {
+      "role": "CIM",
+      "part_number": "DEMO-CIM-B",
+      "condition": "donor / unknown eligibility"
+    },
+    {
+      "role": "ECM",
+      "part_number": "DEMO-ECM-A",
+      "condition": "original"
+    }
+  ],
+  "key_records": [
+    {
+      "label": "Testiavain A",
+      "status": "present (fictional)"
+    },
+    {
+      "label": "Testiavain B",
+      "status": "present (fictional)"
+    },
+    {
+      "label": "Testiavain C",
+      "status": "planned (fictional)"
+    }
+  ]
+}
