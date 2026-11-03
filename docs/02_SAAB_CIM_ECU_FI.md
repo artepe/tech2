@@ -12,6 +12,10 @@ Tämä on **turvallinen diagnostiikka- ja korjaussuunnitelma**, ei lukituksen ta
 
 WIS:n mukaan Saab 9-3 (9440) -avainkoodit liittyvät CIM:iin, ECM:ään ja avaimiin. On olemassa 'transport mode' -tilassa oleva uusi ohjainlaite ja aiemmin autoon liitetty, myöhemmin poistettu laite. Nämä **eivät ole sama lähtötilanne**.
 
+### Dokumentoitu kapasiteetti (9-3 9440)
+
+Saab WIS:n 2010 kuvauksen mukaan 9440-mallin CIM:ssä on **enintään viisi aktivoitua yksilöllistä avainkoodipaikkaa**. Uuden CIM:n *master key code* voi kyseisen kuvauksen mukaan muuttua ensimmäisen hyväksytyn Add-prosessin aikana; jo käytetyllä CIM:llä on erilaiset sidontaedellytykset. Tätä kapasiteettia ei voi suurentaa pelkällä OpenTech2-käyttöliittymän laskurimuutoksella, emmekä oleta sille toimivaa ohitusta. Eri Saab-sukupolvien rajoitukset voivat poiketa toisistaan. [WIS-lähde](https://saabwisonline.com/9-3-9440/2010/3-electrical-system/theft-protection/technical-description/key-code).
+
 ## 2. Tekniset tarkistukset ennen käytetyn CIM:n tai ECU:n hankintaa
 
 Kirjaa *jokaisesta* osasta:
