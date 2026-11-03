@@ -1,9 +1,9 @@
-# Aloita tästä — OpenTech2 Bridge v0.1
+# Aloita tästä — OpenTech2 Bridge v0.2
 
 **Kaksi eri laitetta, kaksi eri toimintoa:**
 
 - **GM/Vetronix Tech 2** on fyysinen huoltotesteri, jonka toiminnallisuus riippuu kortista, ajoneuvosta, CANdi-lisälaitteesta ja tarvittaessa valmistajan TIS/SPS-palvelusta.
-- **OpenTech2 Bridge** tässä GitHub-repossa on riippumaton Python-ohjelma. Sen ajoneuvoyhteys tukee **vain geneeristä, lukevan tilan OBD-II-diagnostiikkaa ELM327-USB-adapterilla**. Se **ei ole Tech 2 -firmware**, se ei lue eikä aja PCMCIA-korttia, eikä siihen voi tällä hetkellä yhdistää alkuperäistä Tech 2 -testeriä.
+- **OpenTech2 Bridge** tässä GitHub-repossa on riippumaton Python-ohjelma. Sen ajoneuvoyhteys tukee **geneeristä, lukevan tilan OBD-II-diagnostiikkaa ELM327-USB-adapterilla ja Linuxissa erillisen, sallittuihin tunnisteisiin rajatun ISO-TP/UDS-lukulaitteen**. Kumpikaan ei vielä ole alkuperäisen Saab Tech 2 -protokollan täysi toteutus. Se **ei ole Tech 2 -firmware**, se ei lue eikä aja PCMCIA-korttia, eikä siihen voi tällä hetkellä yhdistää alkuperäistä Tech 2 -testeriä.
 
 ## MacBook: 5 minuutin demokäynnistys
 
@@ -24,7 +24,8 @@ Demonäkymässä on:
 2. **Mittausarvot**: testiarvot esimerkiksi kierrosluvulle, ajonopeudelle ja moottorin lämpötilalle.
 3. **Vikakoodit**: esimerkkikoodit P0420 ja P0130, **eivät oikean auton vikakoodeja**.
 4. **Ohjelmistokortit**: tietokanta Tech 2 -korttiperheiden nimistä. Tämä **ei asenna kortin ohjelmistoa**.
-5. **Turvapääsy**: listaa toiminnot, jotka **eivät ole käytettävissä** v0.1:ssä.
+5. **ECU-tunnisteet**: OBD-II VIN ja simuloitu UDS-/CAN-tunnisteiden luku; oikea UDS-luku vaatii Linuxin ja varmennetut fyysiset ECU-osoitteet.
+6. **Turvapääsy**: listaa toiminnot, jotka **eivät ole käytettävissä** v0.1:ssä.
 
 Lopeta painamalla Terminalissa Ctrl+C. Demo käynnistyy **ilman autoon yhdistämistä**.
 
@@ -76,5 +77,7 @@ python -m pytest -q
 - **Tyhjä mittausarvo**: auto ei välttämättä tue kyseistä geneeristä PID:tä.
 - **Tech 2 PCMCIA -kortti ei näy**: tarkoituksellista; Mac-ohjelma ei emuloi PCMCIA- tai Tech 2 -laitetta.
 - **Avaimet/CIM/SPS ei toimi**: tarkoituksellista; ne eivät kuulu tähän lukevan tilan v0.1-sovellukseen.
+
+Uuden CAN-/UDS-laajennuksen käyttö: [ECU-lukudiagnostiikka v0.2](04_ECU_LUKUDIAGNOSTIIKKA_FI.md).
 
 Katso myös [Tech 2 -tutkimus](01_TECH2_TUTKIMUS_FI.md), [Saab / CIM / ECU](02_SAAB_CIM_ECU_FI.md) ja [suunnitelma](03_ARKKITEHTUURI_FI.md).

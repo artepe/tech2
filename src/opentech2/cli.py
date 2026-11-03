@@ -48,7 +48,7 @@ def main(argv=None):
     elif args.command=="doctor":
         try: import serial; ser="asennettu"
         except ImportError: ser="puuttuu: pip install -e '.[serial]'"
-        print("OpenTech2 v0.1 | OBD-II: vain luku | OEM / security: ei toteutettu | pyserial:",ser)
+        print("OpenTech2 v0.2 | OBD-II/UDS: vain luku | OEM / security: ei toteutettu | pyserial:",ser)
     elif args.command=="cards":
         registry=CardRegistry()
         value=registry.add(args.file,args.family,args.label) if args.cards_command=="add" else registry.list()

@@ -1,4 +1,4 @@
-# OpenTech2 Bridge v0.1
+# OpenTech2 Bridge v0.2
 
 **Open-source, read-only vehicle diagnostics starter with a Tech 2-inspired interface.**
 
@@ -6,7 +6,7 @@ Independent community project; **not** GM, Bosch, Saab, or official Tech 2 softw
 
 ## Features and limitations
 
-| Feature | v0.1 |
+| Feature | v0.2 |
 | --- | --- |
 | Local web interface on Windows / macOS / Linux | ✅ |
 | Clearly labeled demo mode, no car required | ✅ |
@@ -15,10 +15,12 @@ Independent community project; **not** GM, Bosch, Saab, or official Tech 2 softw
 | Recognize user-owned card images by SHA-256 | ✅ No card copying, execution, or parsing |
 | Generic OBD-II sensor values (Mode 01) | ✅ ELM327-compatible USB serial; vehicle untested |
 | Generic powertrain DTC reading (Mode 03) | ✅ Preliminary |
+| Generic vehicle VIN (OBD-II Mode 09 PID 02) | ✅ ELM327 USB, not vehicle-tested |
+| UDS ECU identity DIDs (0x22) via Linux SocketCAN ISO-TP | ✅ Explicit addresses only, not vehicle-tested |
 | OEM modules, SAE J2534, Tech 2/CANdi, PCMCIA emulation | ❌ Not implemented |
 | SPS, ECU writing, immobilizer/key functions, security access | ❌ Not implemented |
 
-**Read-only prototype.** Do not use it to reprogram or configure an ECU. Real-car and adapter compatibility are not yet verified.
+**Read-only v0.2 prototype.** Do not use it to reprogram or configure an ECU. Real-car and adapter compatibility are not yet verified.
 
 ## Run on macOS / Linux
 

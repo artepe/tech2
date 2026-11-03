@@ -11,7 +11,7 @@
 <body>
   <div class="layout">
     <aside class="sidebar">
-      <div class="logo"><div class="logo-mark">T<span>2</span></div><div><strong>OpenTech2</strong><small>COMMUNITY BRIDGE • v0.1</small></div></div>
+      <div class="logo"><div class="logo-mark">T<span>2</span></div><div><strong>OpenTech2</strong><small>COMMUNITY BRIDGE • v0.2</small></div></div>
       <div class="sidebar-label">DIAGNOSTIIKKA</div>
       <nav><button class="nav active" data-panel="overview">◉ &nbsp; Yleiskuva</button><button class="nav" data-panel="live">▤ &nbsp; Mittausarvot</button><button class="nav" data-panel="faults">⚠ &nbsp; Vikakoodit</button><button class="nav" data-panel="ecu">⌕ &nbsp; ECU-tunnisteet</button><button class="nav" data-panel="cards">▣ &nbsp; Ohjelmistokortit</button><button class="nav" data-panel="security">◇ &nbsp; Turvapääsy</button></nav>
       <div class="sidebar-info"><div class="led"></div><span>LOKAALI TYÖASEMA</span></div>
@@ -60,7 +60,7 @@
       </section>
       <section id="cards" class="panel"><div class="section-bar"><p>Tech 2:n alkuperäiset PCMCIA-korttiohjelmistot eivät sisälly tähän projektiin. Korttien nimet ovat vain tunnisteita.</p></div><div id="card-grid" class="cards"></div><article class="card"><div class="card-title">Oman laillisesti hankitun korttitiedoston tunnistus</div><p>Ohjelma voi tallentaa paikallisen .bin-tiedoston koon ja SHA-256-tiivisteen. Se ei käytä, pura, emuloi eikä kopioi ohjelmistokortin sisältöä.</p><pre>opentech2 cards add /polku/oma-kortti.bin --family saab --label "Oma Saab-kortti"</pre><div id="registered-cards" class="hint"></div></article></section>
       <section id="security" class="panel"><div class="card security-card"><div class="security-symbol">♢</div><div><div class="card-title">TURVATOIMINTOJEN RAJAUS</div><h2>Valmistajan hyväksymä pääsy vaaditaan</h2><p>Ohjelmointi, avaimien opetus, ajonestotoiminnot ja automallikohtaiset kirjoituskomennot vaativat varmennetun ajoneuvoyhteyden, asianmukaisen käyttöoikeuden sekä erikseen toteutetun OEM-liitännän. Tässä versiossa näitä komentoja ei lähetetä.</p></div></div><div id="protected-actions" class="security-list"></div></section>
-      <footer>OpenTech2 Bridge v0.1.0 · read-only generic OBD-II · 127.0.0.1 only · MIT</footer>
+      <footer>OpenTech2 Bridge v0.2.0 · read-only generic OBD-II · 127.0.0.1 only · MIT</footer>
     </main>
   </div>
 </body>
