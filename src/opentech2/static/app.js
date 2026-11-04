@@ -2,8 +2,9 @@
   'use strict';
   const token = document.querySelector('meta[name="app-token"]').content;
   const $ = id => document.getElementById(id);
-  const names = {overview:'Ajoneuvon yleiskuva',live:'Mittausarvot',faults:'Vikakoodit',ecu:'ECU-tunnisteet',cards:'Ohjelmistokortit',security:'Turvapääsy'};
+  const names = {overview:'Ajoneuvon yleiskuva',chrysler:'Chrysler 300 -mallit',live:'Mittausarvot',faults:'Vikakoodit',ecu:'ECU-tunnisteet',cards:'Ohjelmistokortit',security:'Turvapääsy'};
   let catalog;
+  let chryslerProfile = null;
   const asText = (el, text) => { el.textContent = text; };
   const make = (tag, cls, text) => { const el=document.createElement(tag); if(cls)el.className=cls;if(text!==undefined)el.textContent=text;return el; };
   async function api(route, data) {
@@ -19,6 +20,7 @@
     document.querySelectorAll('.panel').forEach(el=>el.classList.toggle('active',el.id===id));
     document.querySelectorAll('.nav').forEach(el=>el.classList.toggle('active',el.dataset.panel===id));
     asText($('page-title'),names[id]);
+    if(id==='chrysler') loadChryslerProfile();
     if(id==='live') fetchLive();
     if(id==='faults') fetchDtcs();
     if(id==='cards') fetchCards();
@@ -32,6 +34,64 @@
     asText($('status-vehicle'),[state.brand,state.model].filter(Boolean).join(' '));
     $('brand').value=state.brand; $('model').value=state.model;
     return state;
+  }
+
+  function renderChrysler(data){
+    const info=$('chrysler-profile-info');
+    const variants=$('chrysler-variant');
+    info.replaceChildren();
+    variants.replaceChildren();
+    const p=data.selected;
+    if(!p){
+      chryslerProfile=null;
+      $('chrysler-apply').disabled=true;
+      const historical=data.year_query!==null && data.year_query>=1955 && data.year_query<=1965;
+      info.append(make('p','',historical?'Historiallinen Chrysler 300 -mallisarja ei käytä OBD-II:ta.':'Tälle vuosimallille ei ole Chrysler 300 -profiilia. Tuotanto päättyi vuonna 2023.'));
+      return;
+    }
+    chryslerProfile=p;
+    $('chrysler-apply').disabled=false;
+    info.append(make('h2','',p.title));
+    info.append(make('div','hint','Vuosimallit '+p.start_year+'–'+p.end_year));
+    info.append(make('p','',p.architecture));
+    const nets=make('div','chrysler-networks');
+    p.networks.forEach(n=>nets.append(make('div','chrysler-network',n)));
+    info.append(nets);
+    info.append(make('p','',p.transport_notes));
+    info.append(make('p','',p.access_notes));
+    info.append(make('p','chrysler-warning','OEM-luku ja ECU-koodaus eivät ole käytössä. Oikean Chrysler-auton yhteyttä ei ole testattu.'));
+    p.variants.forEach(name=>{const option=make('option','',name);option.value=name;variants.append(option);});
+  }
+  async function loadChryslerProfile(){
+    resetError();
+    const year=Number($('chrysler-year').value);
+    if(!Number.isInteger(year)||year<1955||year>2023){report(new Error('Anna mallivuosi 1955–2023'));return;}
+    try{
+      const data=await api('/api/chrysler-300?year='+year);
+      renderChrysler(data);
+      const grid=$('chrysler-generations');grid.replaceChildren();
+      data.profiles.forEach(p=>{
+        const el=make('article','card-item');
+        el.append(make('strong','',p.title));
+        el.append(make('small','',p.start_year+'–'+p.end_year));
+        el.append(make('span','','OBD-II TESTAAMATON · OEM EI TOTEUTETTU'));
+        grid.append(el);
+      });
+    }catch(e){report(e);}
+  }
+  async function applyChryslerProfile(){
+    resetError();
+    if(!chryslerProfile){report(new Error('Valitse profiili ensin'));return;}
+    const year=Number($('chrysler-year').value);
+    const variant=$('chrysler-variant').value;
+    if(year<chryslerProfile.start_year||year>chryslerProfile.end_year||!chryslerProfile.variants.includes(variant)){
+      report(new Error('Profiili ei vastaa vuosimallia'));return;
+    }
+    try{
+      await api('/api/select',{brand:'Chrysler',model:variant+' '+year});
+      await status();
+      showPanel('overview');
+    }catch(e){report(e);}
   }
   async function fetchLive(){
     resetError();const grid=$('sensor-grid');grid.replaceChildren(make('div','empty','Haetaan arvoja…'));
@@ -115,6 +175,8 @@
     $('read-obd-vin').addEventListener('click',fetchObdVin);
     $('demo-uds').addEventListener('click',()=>fetchUds(true));
     $('read-uds').addEventListener('click',()=>fetchUds(false));
+    $('chrysler-profile-load').addEventListener('click',loadChryslerProfile);
+    $('chrysler-apply').addEventListener('click',applyChryslerProfile);
   }catch(e){report(e);}}
   init();
 })();

@@ -42,6 +42,18 @@ Open **http://127.0.0.1:8765** in the browser **only after** the server starts. 
 
 Windows (PowerShell): `py -m venv .venv`, `.venv\Scripts\Activate.ps1`, `py -m pip install -e ".[serial]"`, `opentech2 serve --demo`.
 
+## Chrysler 300 / 300C / 300M: 1999–2023
+
+OpenTech2 sisältää **Chrysler 300 -mallivuosiprofiilit** vanhasta 300M:stä vuoden 2023 300C:hen. Profiilit erottavat vanhemman pre-CAN-verkon, CAN-aikakauden ja SGW-suojauksen, mutta **eivät** toteuta valmistajakohtaista ECU-diagnostiikkaa.
+
+```bash
+opentech2 chrysler-300 --year 2006
+opentech2 chrysler-300 --year 2023
+opentech2 serve --demo
+```
+
+Selaimen **Chrysler 300** -välilehdellä voi tarkistaa mallivuoden. [Chrysler 300 -profiilit ja testausohje](docs/06_CHRYSLER_300_FI.md). Historialliset 1955–1965-mallit ovat mukana vain tietona, eivät OBD-II-laitteina.
+
 ## Uutta: ECU-identiteetin luku / UDS (v0.2)
 
 **Oikea, rajattu CAN/ISO-TP-lukuyhteys Linuxissa** sekä simuloitu testi Macilla:
@@ -60,6 +72,7 @@ Lisäohje: [CAN/UDS-kehitys ja rajoitukset](docs/04_ECU_LUKUDIAGNOSTIIKKA_FI.md)
 
 - [Aloita tästä: MacBook, demo ja OBD-II](docs/00_ALOITA_TASTA_FI.md)
 - [Testaajille: ELM327 USB -testaus, portit ja palaute](docs/05_ELM327_TESTAUS_FI.md)
+- [Chrysler 300 / 300C / 300M -mallivuosiopas](docs/06_CHRYSLER_300_FI.md)
 - [Tech 2 -tutkimus, laitteet, CANdi, kortit ja valikot](docs/01_TECH2_TUTKIMUS_FI.md)
 - [Saab, CIM, TWICE, ECM, avaimet ja osanumerot](docs/02_SAAB_CIM_ECU_FI.md)
 - [Avoimen lähdekoodin kehityssuunnitelma](docs/03_ARKKITEHTUURI_FI.md)
@@ -94,6 +107,7 @@ This **only** stores the filename, size, selected card family, and SHA-256 hash 
 - `src/opentech2/adapters.py`: offline demo and optional ELM327 serial adapter
 - `src/opentech2/diagnostics.py`: generic OBD-II response decoding
 - `src/opentech2/catalog.py`: brand and card metadata
+- `src/opentech2/chrysler300.py`: read-only Chrysler 300 year profiles
 - `src/opentech2/cards.py`: SHA-256 card registry
 - `src/opentech2/security.py`: fail-closed boundary for protected OEM actions
 - `tests/`: unit and local HTTP tests

@@ -2,13 +2,14 @@
 from __future__ import annotations
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit, parse_qs
 import json
 import re
 import secrets
 import threading
 from .adapters import DemoAdapter, ELM327Adapter, AdapterError
 from .catalog import as_json, MAKES
+from .chrysler300 import catalog as chrysler300_catalog
 from .cards import CardRegistry
 from .security import PROTECTED_ACTIONS
 from .uds import SocketCanDidReader, UdsError, parse_dids, read_demo_identification
@@ -95,6 +96,14 @@ class Handler(BaseHTTPRequestHandler):
             ctype = "application/javascript; charset=utf-8" if filename.endswith(".js") else "text/css; charset=utf-8"
             return self._send(200,(STATIC_DIR/filename).read_bytes(),ctype)
         if path == "/api/catalog": return self._send(200, as_json())
+        if path == "/api/chrysler-300":
+            query = parse_qs(urlsplit(self.path).query)
+            if "year" in query:
+                years = query["year"]
+                if len(years) != 1 or not re.fullmatch(r"[0-9]{4}", years[0]):
+                    return self._send(400, {"error": "Anna nelinumeroinen mallivuosi"})
+                return self._send(200, chrysler300_catalog(int(years[0])))
+            return self._send(200, chrysler300_catalog())
         if path == "/api/status": return self._send(200, self.server.state.status())
         if path == "/api/cards": return self._send(200, self.server.state.card_registry.list())
         if path == "/api/security": return self._send(200, [vars(c) for c in PROTECTED_ACTIONS])

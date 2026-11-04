@@ -13,7 +13,7 @@
     <aside class="sidebar">
       <div class="logo"><div class="logo-mark">T<span>2</span></div><div><strong>OpenTech2</strong><small>COMMUNITY BRIDGE • v0.2</small></div></div>
       <div class="sidebar-label">DIAGNOSTIIKKA</div>
-      <nav><button class="nav active" data-panel="overview">◉ &nbsp; Yleiskuva</button><button class="nav" data-panel="live">▤ &nbsp; Mittausarvot</button><button class="nav" data-panel="faults">⚠ &nbsp; Vikakoodit</button><button class="nav" data-panel="ecu">⌕ &nbsp; ECU-tunnisteet</button><button class="nav" data-panel="cards">▣ &nbsp; Ohjelmistokortit</button><button class="nav" data-panel="security">◇ &nbsp; Turvapääsy</button></nav>
+      <nav><button class="nav active" data-panel="overview">◉ &nbsp; Yleiskuva</button><button class="nav" data-panel="chrysler">◈ &nbsp; Chrysler 300</button><button class="nav" data-panel="live">▤ &nbsp; Mittausarvot</button><button class="nav" data-panel="faults">⚠ &nbsp; Vikakoodit</button><button class="nav" data-panel="ecu">⌕ &nbsp; ECU-tunnisteet</button><button class="nav" data-panel="cards">▣ &nbsp; Ohjelmistokortit</button><button class="nav" data-panel="security">◇ &nbsp; Turvapääsy</button></nav>
       <div class="sidebar-info"><div class="led"></div><span>LOKAALI TYÖASEMA</span></div>
       <p class="sidebar-footer">Itsenäinen avoin projekti. Ei GM:n, Saabin tai Boschin virallinen ohjelmisto.</p>
     </aside>
@@ -27,6 +27,31 @@
           <article class="card"><div class="card-title">2 / Ajoneuvoyhteys</div><div class="data-pair"><span>Yhteystila</span><strong id="status-adapter">Ei yhteyttä</strong></div><div class="data-pair"><span>Ajoneuvo</span><strong id="status-vehicle">—</strong></div><label for="port">ELM327 USB-sarjaportti</label><input id="port" placeholder="/dev/cu.usbserial-0001" value="" /><label for="baud">Nopeus (baud)</label><select id="baud"><option>38400</option><option>115200</option><option>9600</option><option>57600</option></select><div class="buttonrow"><button class="button primary" id="connect">Yhdistä</button><button class="button ghost" id="disconnect">Katkaise</button></div><div class="hint">Mac: /dev/cu.usbserial-... • Linux: /dev/ttyUSB0 • Windows: COM3</div></article>
         </div>
         <article class="card feature-card"><div><div class="card-title">Kolmen kerroksen ratkaisu</div><h2>Yksi käyttöliittymä. Laajennettavat automerkit.</h2><p>Geneerinen OBD-II on käytössä ELM327-yhteyden kautta. Tech 2 -kortit näkyvät metatietokatalogina. Valmistajakohtainen diagnostiikka ja virallinen turvapääsy ovat jatkokehityksen moduuleja.</p></div><div class="feature-rows"><div><strong>01</strong> OBD-II → live & vikakoodit <span class="mini ready">TOTEUTETTU</span></div><div><strong>02</strong> OEM-profiilit / kortit <span class="mini">KATALOGI</span></div><div><strong>03</strong> Ohjainlaitteet / turvapääsy <span class="mini lock">EI TOTEUTETTU</span></div></div></article>
+      </section>
+
+      <section id="chrysler" class="panel">
+        <div class="banner demo">CHRYSLER 300 -PROFIILIT • Mallivuositiedot eivät ole OEM-diagnostiikkaa eivätkä muuta adapterin protokollaa.</div>
+        <div class="column-grid">
+          <article class="card">
+            <div class="card-title">Chrysler 300 / 300C / 300M</div>
+            <h2>Valitse vuosimalli</h2>
+            <p>300M ja uudemmat 300-sukupolvet käyttävät eri diagnostiikka-arkkitehtuureja. Historialliset 1950- ja 1960-luvun autot näkyvät tietona, eivät OBD2-yhteytenä.</p>
+            <label for="chrysler-year">Vuosimalli</label><input id="chrysler-year" type="number" inputmode="numeric" min="1955" max="2023" value="2008" />
+            <button class="button secondary" id="chrysler-profile-load">Näytä profiili</button>
+            <label for="chrysler-variant">Malliversio</label><select id="chrysler-variant"></select>
+            <button class="button primary" id="chrysler-apply">Aseta yleiskuvan ajoneuvoksi</button>
+            <p class="hint">Tämä valitsee vain mallin ja vuosiluvun. Se ei käynnistä Chryslerin ECU-ohjelmointia eikä avaa SGW-suojausta.</p>
+          </article>
+          <article class="card">
+            <div class="card-title">Tekniset tiedot ja rajoitukset</div>
+            <div id="chrysler-profile-info"><p class="hint">Valitse vuosimalli ja paina Näytä profiili.</p></div>
+          </article>
+        </div>
+        <article class="card" style="margin-top:18px">
+          <div class="card-title">Sukupolvet</div>
+          <div class="cards" id="chrysler-generations"></div>
+          <p class="hint">Toteutettu: vain geneerinen OBD-II ELM327 USB -yhteydellä auton tukemiin perustietoihin. Chrysler-kohtainen moduuliskannaus ja SGW-autentikointi eivät vielä toimi.</p>
+        </article>
       </section>
       <section id="live" class="panel"><div class="section-bar"><p>Mode 01 -päästöjärjestelmien perustiedot. Kaikki anturit eivät ole kaikissa autoissa käytössä.</p><button class="button secondary" id="refresh-live">Päivitä arvot</button></div><div id="sensor-grid" class="metrics"><div class="empty">Yhdistä adapteri tai käynnistä --demo.</div></div></section>
       <section id="faults" class="panel"><div class="section-bar"><p>Geneeriset OBD-II Mode 03 -vikakoodit. ABS-, airbag- ja korimoduulit vaativat OEM-liitännän.</p><button class="button secondary" id="refresh-dtcs">Lue vikakoodit</button></div><div class="card"><div class="card-title">Vikakoodit</div><div id="dtc-list" class="dtcs empty">Vikakoodeja ei ole vielä luettu.</div><div class="hint">Vikakoodien poisto on tarkoituksella pois käytöstä.</div></div></section>

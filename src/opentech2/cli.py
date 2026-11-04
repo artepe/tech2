@@ -4,6 +4,7 @@ import json
 from .catalog import CARD_FAMILIES
 from .cards import CardRegistry
 from .inventory import analyze_inventory
+from .chrysler300 import catalog as chrysler300_catalog
 from .uds import SocketCanDidReader, parse_dids, read_demo_identification, UdsError
 from .server import make_server
 
@@ -28,9 +29,13 @@ def main(argv=None):
     uds.add_argument("--tx-id",help="ECU:n fyysinen pyyntö-ID, esim. 0x7E0")
     uds.add_argument("--rx-id",help="ECU:n vastaus-ID, esim. 0x7E8")
     uds.add_argument("--dids",default="F190,F187,F188",help="Sallitut DID:t pilkuilla: F190,F187,F188")
+    ch=sub.add_parser("chrysler-300",help="Chrysler 300 / 300C / 300M -vuosimallitietokanta")
+    ch.add_argument("--year",type=int,help="Mallivuosi")
     sub.add_parser("doctor",help="Tarkista ohjelmiston perustiedot")
     args=parser.parse_args(argv)
-    if args.command=="ecu-read":
+    if args.command=="chrysler-300":
+        print(json.dumps(chrysler300_catalog(args.year),ensure_ascii=False,indent=2))
+    elif args.command=="ecu-read":
         try:
             dids=parse_dids(args.dids.split(","))
             if args.demo:
