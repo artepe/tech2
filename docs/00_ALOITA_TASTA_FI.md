@@ -5,19 +5,24 @@
 - **GM/Vetronix Tech 2** on fyysinen huoltotesteri, jonka toiminnallisuus riippuu kortista, ajoneuvosta, CANdi-lisälaitteesta ja tarvittaessa valmistajan TIS/SPS-palvelusta.
 - **OpenTech2 Bridge** tässä GitHub-repossa on riippumaton Python-ohjelma. Sen ajoneuvoyhteys tukee **geneeristä, lukevan tilan OBD-II-diagnostiikkaa ELM327-USB-adapterilla ja Linuxissa erillisen, sallittuihin tunnisteisiin rajatun ISO-TP/UDS-lukulaitteen**. Kumpikaan ei vielä ole alkuperäisen Saab Tech 2 -protokollan täysi toteutus. Se **ei ole Tech 2 -firmware**, se ei lue eikä aja PCMCIA-korttia, eikä siihen voi tällä hetkellä yhdistää alkuperäistä Tech 2 -testeriä.
 
-## MacBook: 5 minuutin demokäynnistys
+## MacBook: demokäynnistys
 
 ```bash
+# Jos kansi on jo kloonattu: cd ~/tech2 && git pull
 git clone https://github.com/artepe/tech2.git
 cd tech2
+python3 --version     # Vähintään 3.10
 python3 -m venv .venv
 source .venv/bin/activate
+python -m pip install --upgrade pip setuptools wheel
 python -m pip install -e '.[serial]'
 opentech2 doctor
 opentech2 serve --demo
 ```
 
-Avaa selaimessa <http://127.0.0.1:8765>.
+Pidä tämän komennon Terminal-välilehti käynnissä. Avaa **vasta sitten** toisessa välilehdessä Safarilla <http://127.0.0.1:8765>. Sivu ei aukea, jos pelkästään kirjoitat Terminaliin `open http://127.0.0.1:8765` käynnistämättä ensin palvelinta.
+
+Jos Macissa näkyy vanha `pip 21.2.4` tai `setup.py`-virhe, virtuaaliympäristö ei ole käytössä tai siihen on luotu liian vanha Python. Asenna Python 3.10+ ja suorita yllä olevat asennusvaiheet. Tarkempi vianmääritys: [ELM327-testausohje](05_ELM327_TESTAUS_FI.md).
 
 Demonäkymässä on:
 1. **Yleiskuva**: valitse automerkki, malli ja vuosimalli omiin muistiinpanoihisi.
@@ -25,11 +30,13 @@ Demonäkymässä on:
 3. **Vikakoodit**: esimerkkikoodit P0420 ja P0130, **eivät oikean auton vikakoodeja**.
 4. **Ohjelmistokortit**: tietokanta Tech 2 -korttiperheiden nimistä. Tämä **ei asenna kortin ohjelmistoa**.
 5. **ECU-tunnisteet**: OBD-II VIN ja simuloitu UDS-/CAN-tunnisteiden luku; oikea UDS-luku vaatii Linuxin ja varmennetut fyysiset ECU-osoitteet.
-6. **Turvapääsy**: listaa toiminnot, jotka **eivät ole käytettävissä** v0.1:ssä.
+6. **Turvapääsy**: listaa toiminnot, jotka **eivät ole käytettävissä** v0.2:ssa.
 
 Lopeta painamalla Terminalissa Ctrl+C. Demo käynnistyy **ilman autoon yhdistämistä**.
 
 ## Oikean auton geneerinen OBD-II-luku
+
+Katso laajempi [testaajan ELM327 USB -ohje](05_ELM327_TESTAUS_FI.md), joka sisältää sarjaportin tarkistuksen, Macin asennusvirheet ja vikailmoitukset.
 
 Tarvitset USB-sarjaportin kautta toimivan ELM327-yhteensopivan adapterin. Ajoneuvon ja adapterin yhteensopivuutta **ei ole vielä testattu** tässä projektissa. MacBookissa etsi portti:
 
@@ -76,7 +83,7 @@ python -m pytest -q
 - **Autoyhteyttä ei synny**: tarkista virran kytkentä, adapterin nopeus, OBD-tuki ja toimiva virtalähde. Viallinen kaapeli tai klooniadapteri on mahdollinen.
 - **Tyhjä mittausarvo**: auto ei välttämättä tue kyseistä geneeristä PID:tä.
 - **Tech 2 PCMCIA -kortti ei näy**: tarkoituksellista; Mac-ohjelma ei emuloi PCMCIA- tai Tech 2 -laitetta.
-- **Avaimet/CIM/SPS ei toimi**: tarkoituksellista; ne eivät kuulu tähän lukevan tilan v0.1-sovellukseen.
+- **Avaimet/CIM/SPS ei toimi**: tarkoituksellista; ne eivät kuulu tähän lukevan tilan v0.2-sovellukseen.
 
 Uuden CAN-/UDS-laajennuksen käyttö: [ECU-lukudiagnostiikka v0.2](04_ECU_LUKUDIAGNOSTIIKKA_FI.md).
 

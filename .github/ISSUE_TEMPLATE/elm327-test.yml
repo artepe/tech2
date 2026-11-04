@@ -1,0 +1,58 @@
+name: ELM327 test report
+description: Testikokemuksia ja virheraportteja ELM327 USB -lukijasta
+title: "[ELM327] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Kiitos testaamisesta! Ohjelma on prototyyppi ja vain lukutoimintoja.
+        Älä lähetä VIN-tunnusta kokonaisena, rekisteritunnusta, avaintietoja, turvakoodeja tai henkilökohtaisia tunnistetietoja.
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Testitila
+      options:
+        - Oikea auto ELM327 USB
+        - Offline-demo
+    validations:
+      required: true
+  - type: input
+    id: vehicle
+    attributes:
+      label: Auto
+      description: Esim Saab 9-3 2006 2.0t
+      placeholder: Merkki malli vuosimalli moottori
+    validations:
+      required: true
+  - type: input
+    id: adapter
+    attributes:
+      label: ELM327-sovitin
+      description: Valmistaja malli ja USB-sarjaliitäntä jos tiedossa
+      placeholder: Esim USB ELM327 CH340
+  - type: input
+    id: computer
+    attributes:
+      label: Mac Windows tai Linux ja Python-versio
+      placeholder: macOS 15 Python 3.12
+  - type: dropdown
+    id: result
+    attributes:
+      label: Yhdistys autoon
+      options:
+        - Onnistui
+        - Epäonnistui
+        - Ei testattu
+    validations:
+      required: true
+  - type: textarea
+    id: readings
+    attributes:
+      label: Toimivat mittausarvot
+      description: Mitkä kentät toimivat ja mitkä eivät
+  - type: textarea
+    id: errors
+    attributes:
+      label: Virheilmoitus ja toistamisvaiheet
+      description: Poista VIN ja muut tunnistetiedot ennen liittämistä

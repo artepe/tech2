@@ -27,13 +27,18 @@ Independent community project; **not** GM, Bosch, Saab, or official Tech 2 softw
 ```bash
 git clone https://github.com/artepe/tech2.git
 cd tech2
+python3 --version    # Python 3.10 tai uudempi
 python3 -m venv .venv
 source .venv/bin/activate
+python -m pip install --upgrade pip setuptools wheel
 python -m pip install -e '.[serial]'
+opentech2 doctor
 opentech2 serve --demo
 ```
 
-Open **http://127.0.0.1:8765**. Remove `--demo` for a compatible USB ELM327 adapter. In the UI, select the serial port (macOS: `ls /dev/cu.*`, Linux: `ls /dev/serial/by-id/`) and a supported baud rate. Vehicle and adapter compatibility are not yet tested.
+Open **http://127.0.0.1:8765** in the browser **only after** the server starts. Keep that Terminal tab running. For a real car stop the demo with Ctrl+C, then run `opentech2 serve` without `--demo` and select an ELM327-compatible **USB serial** port. Bluetooth and Wi-Fi adapters are not supported directly in v0.2. Actual vehicle/adapter compatibility remains unverified.
+
+**Suomeksi testaajille:** [ELM327 USB -asennus ja oikean auton testaus](docs/05_ELM327_TESTAUS_FI.md) sisältää MacBookin asennusvirheiden korjauksen, portin tunnistuksen, testausohjeet ja palautelomakkeen.
 
 Windows (PowerShell): `py -m venv .venv`, `.venv\Scripts\Activate.ps1`, `py -m pip install -e ".[serial]"`, `opentech2 serve --demo`.
 
@@ -54,6 +59,7 @@ Lisäohje: [CAN/UDS-kehitys ja rajoitukset](docs/04_ECU_LUKUDIAGNOSTIIKKA_FI.md)
 ## Ohjeet suomeksi
 
 - [Aloita tästä: MacBook, demo ja OBD-II](docs/00_ALOITA_TASTA_FI.md)
+- [Testaajille: ELM327 USB -testaus, portit ja palaute](docs/05_ELM327_TESTAUS_FI.md)
 - [Tech 2 -tutkimus, laitteet, CANdi, kortit ja valikot](docs/01_TECH2_TUTKIMUS_FI.md)
 - [Saab, CIM, TWICE, ECM, avaimet ja osanumerot](docs/02_SAAB_CIM_ECU_FI.md)
 - [Avoimen lähdekoodin kehityssuunnitelma](docs/03_ARKKITEHTUURI_FI.md)
